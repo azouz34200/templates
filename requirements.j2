@@ -1,0 +1,6 @@
+{%for role in roles %}
+- src: {{ role["url" }}
+  name: {{ role["name"] }}
+  scm: git
+  version: {{ role["version"] }}
+{% endfor %}
