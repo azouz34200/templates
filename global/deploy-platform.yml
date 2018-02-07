@@ -1,0 +1,16 @@
+---
+- name: Check global devops prerequisites
+  hosts: all
+  roles:
+    - { role: role_edge_prerequis_app, edge_appname: "{{ app_name }}",edge_os_version: "{{ os_version }}", edge_me_group: "{{ app_me_group }}" }
+    - { role: role_create_fs,   role_create_fs_list: "{{ common_fs_list }}"}
+    - { role: role_filebeat,  filebeat_logstash_host: "{{ logs_host }}", filebeat_logstash_port: "{{ logstash_port }}", filebeat_log_path: "{{ filebeat_log }}",filebeat_log_fetching_paths: "{{ filebeat_dir_fetching_log }}", elasticsearch_host: "{{ logs_host }}",filebeat_log_id: "{{ app_irt }}_{{ app_name }}", filebeat_log_env: "{{ app_env }}" }
+
+- name: check elk prerequisites - logs
+  hosts: elk
+  roles:
+  - { role: role_create_fs, role_create_fs_list: "{{ elk_list_fs }}" }
+  - { role: role_elasticsearch , elasticsearch_log_path: "{{ elasticsearch_log }}", elasticsearch_data_path: "{{ app_data_path }}/elasticsearch"}
+  - { role: role_kibana , kibana_log_path: "{{ kibana_log }}", elasticsearch_url: "http://{{ ansible_hostname }}:{{ elasticsearch_port }}"}
+  - { role: role_logstash , logstash_elasticsearch_port: "{{ elasticsearch_port }}", logstash_elasticsearch_host: "{{ ansible_hostname }}", logstash_logs_path: "{{ logstash_log }}", logstash_data_path : "{{ app_data_path }}/logstash",logstash_output: "elasticsearch", logstash_output_hosts: "{{ ansible_hostname }}:{{ elasticsearch_port }}"}
+- { role: role_elasticsearch_exploit , elasticsearch_exploit_state: "purge_routine", elasticsearch_exploit_unit: "{{ role_elasticsearch_exploit_unit }}", elasticsearch_exploit_unit_count: "{{ role_elasticsearch_exploit_unit_count }}" }

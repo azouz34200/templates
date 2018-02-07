@@ -1,0 +1,29 @@
+- name: Install App
+  hosts: api
+  roles:
+    - { role: role_fat_jar,
+          fat_jar_repository: "{{ app_nexus_repository }}",
+          fat_jar_group_id: "{{ app_group_id }}",
+          fat_jar_artefact_id: "{{ app_artefact_id }}",
+          fat_jar_version: "{{ ard_version }}",
+          fat_jar_name: "{{ jar_name }}",
+          fat_jar_config_file: "{{ jar_config }}",
+          fat_jar_sysconfig: "{{ app_fat_jar_sysconfig }}",
+          fat_jar_url_to_check: "{{ app_fat_jar_url_to_check }}",
+          fat_jar_proxy_port : "{{app_fat_jar_proxy_port}}",
+          fat_jar_url_protocol: "{{ app_fat_jar_url_protocol }}",
+          fat_jar_url_validate_certs: "{{ app_fat_jar_url_validate_certs }}",
+          fat_jar_force_install: "{{ app_fat_jar_force_install }}",
+          fat_jar_app_env: "{{ PNET_env }}",
+          fat_jar_opt: "{{ app_fat_jar_opt }}",
+          fat_jar_health_check: "{{ app_health_check }}",
+          fat_jar_lb_ip_health_check: "{{ app_lb_ip_health_check_active }}" ,
+          fat_jar_health_check_port: "{{ app_port }}",
+          fat_jar_health_check_url: "/{{ app_fat_jar_url_to_check }}"
+      }
+
+- name:  Ensure  monitor weburl using Patrol Configured
+  hosts: api
+  roles:
+    - { role: role_patrol_ism, patrol_action: "create"}
+    - { role: role_patrol_ism, patrol_action: "configure", pat_list_url: "{{ patrol_list_url }}"}

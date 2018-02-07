@@ -1,0 +1,12 @@
+- name: Ensure nginx is present in api hosts
+  hosts: api
+  become: yes
+  become_user: root
+  pre_tasks:
+  - name: ensure JRE is installed
+    yum:
+        name: "{{ jre_version }}"
+        enablerepo: "sofabsc-gts-yum"
+        state: present
+  roles:
+    - { role: role_nginx, nginx_log_path: "{{ app_nginx_log }}", nginx_config: "{{ api_conf_nginx }}", nginx_worker_process: "{{ app_nginx_worker_process }}", nginx_ssl_certificate: "{{ api_nginx_ssl_certificate }}", nginx_ssl_certificate_key: "{{ api_nginx_ssl_certificate_key }}" }

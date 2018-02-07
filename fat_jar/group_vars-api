@@ -1,0 +1,59 @@
+# Artefect Details (Nexus)
+app_group_id: ""
+app_artefact_id: "{{ jar_name }}"
+
+# Health Check
+app_fat_jar_url_to_check: ""
+
+
+#FileBeat
+filebeat_dir_fetching_log:
+- { path: '{{ app_nginx_log }}/*.log', type: 'nginx', exclude: "[\\.gz$, \\.zip$]"}
+- { path: '{{ api_log }}/*.log', type: 'api', exclude: "[\\.gz$, \\.zip$]"}
+- { path: '{{ filebeat_log }}/*.log', type: 'filebeat-app', exclude: "[\\.gz$, \\.zip$]"}
+
+# Nginx
+app_fat_jar_url_protocol: "https"
+app_fat_jar_proxy_port: 443
+app_fat_jar_url_validate_certs: false
+api_conf_nginx:
+- { port: "{{ app_fat_jar_proxy_port }}", directory: "{{ jar_name }}", ssl: "{{ api_nginx_ssl_status }}" }
+api_nginx_ssl_certificate: "{{ vault_certificate }}"
+api_nginx_ssl_certificate_key: "{{ vault_certificate_key }}"
+
+## Certificates
+certs_home: "{{ app_home }}/certs"
+
+### Application Properties ###
+app_xms: 512m
+app_xmx: 6g
+app_fat_jar_opt:
+  -Dserver.port={{ app_port }}
+  -Xms{{ app_xms }}
+  -Xmx{{ app_xmx }}
+  -Dserver.address=127.0.0.1
+
+api_log: "{{ app_log }}/apps"
+
+jar_config:
+  application:
+  - this.application.properties.file=application.properties
+ 
+
+patrol_list_url:
+  - pat_hostname : "{{ front_hostname }}"
+    pat_protocole: "{{ app_fat_jar_url_protocol }}"
+    pat_ip : "{{ front_ip }}"
+    pat_label : 'database'
+    pat_url : "{{ app_fat_jar_url_to_check }}"
+    pat_port : "{{ app_fat_jar_proxy_port }}"
+    pat_expression: "\\\"db\\\":{\\\"status\\\":\\\"UP\\\""
+    pat_severity_pagestatus: 'warning'
+  - pat_hostname : "{{ front_hostname }}"
+    pat_protocole: "{{ app_fat_jar_url_protocol }}"
+    pat_ip : "{{ front_ip }}"
+    pat_label : 'diskSpace'
+    pat_url : "{{ app_fat_jar_url_to_check }}"
+    pat_port : "{{ app_fat_jar_proxy_port }}"
+    pat_expression: "\\\"diskSpace\\\":{\\\"status\\\":\\\"UP\\\""
+pat_severity_pagestatus: 'warning'
