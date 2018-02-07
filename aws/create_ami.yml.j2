@@ -1,0 +1,11 @@
+---
+- name: Provision an EC2 Instance
+  hosts: localhost
+  connection: local
+  roles:
+   - { role: role_create_ami: }
+   
+- name: Prepare EC2 Instance to build AMI for project "{{ project_name }}"
+    hosts: launched
+    become: True
+    gather_facts: True

@@ -1,0 +1,23 @@
+app_data_path: "{{ app_home }}/data"
+appli_data_size: "100g"
+
+log_kibana_http_port: 5601
+log_elastic_http_port: 9200
+
+
+elk_list_fs:
+- { inv_group: 'all', name: 'appli_data', mntp: "{{ app_data_path }}", size: "{{ appli_data_size }}", device: "{{ device_vg }}", owner: "{{ app_user }}", group: "{{ app_group }}", mode: "{{fs_mode}}", physical_volume: "{{fs_physical_volume}}" }
+
+filebeat_dir_fetching_log:
+- { path: '{{ elasticsearch_log }}/*.log', type: 'log_elk', exclude: "[\\.gz$, \\.zip$]"}
+- { path: '{{ kibana_log }}/*.log', type: 'log_elk', exclude: "[\\.gz$, \\.zip$]"}
+- { path: '{{ logstash_log }}/*.log', type: 'log_elk', exclude: "[\\.gz$, \\.zip$]"}
+- { path: '{{ filebeat_log }}/*.log', type: 'filebeat_log', exclude: "[\\.gz$, \\.zip$]"}
+
+role_elasticsearch_exploit_unit: "months"
+role_elasticsearch_exploit_unit_count: "3"
+
+#NGINX
+log_proxy_port: "80"
+log_conf_nginx:
+- { port: "{{ log_proxy_port }}", directory: "kibana_proxy"}

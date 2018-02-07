@@ -1,0 +1,38 @@
+---
+#GLOBAL Host Details
+os_version: "7.3.1611"
+jre_version: "jre1.8.0_121"
+fs_physical_volume : "/dev/sdb"
+fs_mode : '0755'
+device_vg : "{{ app_name }}vg"
+app_user: "appli"
+app_group: "utilisateur"
+app_me_group: ""
+common_fs_list:
+- { inv_group: 'all', name: 'appli', mntp: "{{ app_home }}", size: "{{ app_home_size }}", physical_volume: "{{ fs_physical_volume }}", device: "{{ device_vg }}", owner: "{{ app_user }}", group: "{{ app_group }}", mode: "{{ fs_mode }}" }
+- { inv_group: 'all', name: 'appli_logs', mntp: "{{ app_log }}", size: "{{ app_log_size }}", physical_volume: "{{ fs_physical_volume }}", device: "{{ device_vg }}", owner: "{{ app_user }}", group: "{{ app_group }}", mode: "{{ fs_mode }}" }
+
+
+#Application Details
+app_port: "8081"
+jar_name: ""
+app_name: "ard"
+app_irt: "a2309"
+app_home: "/applis/{{ app_name }}"
+app_log: "{{ app_home }}/logs"
+
+#NGINX
+app_nginx_log: "{{ app_log }}/nginx"
+app_nginx_worker_process: "4"
+
+ #Logs
+elasticsearch_port: 9200
+logstash_port: 5044
+elasticsearch_log: "{{ app_log }}/elasticsearch"
+kibana_log: "{{ app_log }}/kibana"
+logstash_log: "{{ app_log }}/logstash"
+filebeat_log: "{{ app_log }}/filebeat"
+
+#workinstruction
+patrol_wi_actionHO: "no_action"
+patrol_wi_actionHNO: "no_action"
